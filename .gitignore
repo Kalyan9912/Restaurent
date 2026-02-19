@@ -1,0 +1,12 @@
+# Frontend
+FRONTEND/node_modules
+FRONTEND/build
+
+# Backend
+BACKEND/target
+
+# Logs
+*.log
+package-lock.json
+react.log
+
