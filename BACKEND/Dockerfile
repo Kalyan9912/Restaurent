@@ -12,6 +12,6 @@ RUN ls -l target
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
-COPY --from=build target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
