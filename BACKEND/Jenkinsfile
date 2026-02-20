@@ -1,0 +1,51 @@
+pipeline{
+    agent any
+    tools{
+        maven 'mymaven'
+    }
+    environment{
+        IMAGE_NAME='kalyanimage'
+        IMAGE_TAG="${BUILD_NUMBER}"
+        CONTAINER_PORT='8080'
+        
+    }
+    stages{
+        stage('Check Out'){
+            steps{
+                git branch: 'main', url: 'https://github.com/Kalyan9912/Restaurent.git'
+            }
+        }
+        stage('Compile'){
+            steps{
+                dir('BACKEND'){
+                    sh 'mvn clean compile'
+                }
+                
+            }
+            
+        }
+        stage('Package'){
+            steps{
+                dir('BACKEND'){
+                sh 'mvn package'
+                }
+            }
+        }
+        stage('Docker Build'){
+            steps{
+                dir('BACKEND'){
+                sh 'docker build -t kalyanimage:${BUILD_NUMBER} .'
+                }
+            }
+                
+        }
+        stage('Container'){
+            steps{
+                sh 'docker run -itd --name kalyancontainer${BUILD_NUMBER} -p ${BUILD_NUMBER}:${CONTAINER_PORT} kalyanimage:${BUILD_NUMBER}'
+            }
+        }
+            
+        
+        
+    }
+}
