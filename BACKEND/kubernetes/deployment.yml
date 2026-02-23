@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: restaurant-container
-          image: kalyanimage:IMAGE_TAG
+          image: kalyanrelangiii/kalyanimage:IMAGE_TAG
           ports:
             - containerPort: 8080
           resources:
