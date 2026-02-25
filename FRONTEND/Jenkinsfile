@@ -1,0 +1,61 @@
+pipeline{
+    agent any
+    tools{
+        maven 'mymaven'
+        nodejs 'mynodejs'
+    }
+    environment{
+        FRONTIMAGENAME='frontendimage'
+        BACKIMAGENAME='backendimage'
+        CONTAINERNAMEFRONT= 'kalyancontainerfront'
+        CONTAINERNAMEBACK='kalyancontainerback'
+    }
+    
+    stages{
+        stage('CHECKOUT CODE'){
+            steps{
+            git branch: 'main', url: 'https://github.com/Kalyan9912/Restaurent.git'
+            }
+        }
+        stage(' BACKEND BUILD'){
+            steps{
+                dir('BACKEND'){
+                    sh 'mvn compile'
+                }
+            }
+        }
+        stage('FRONTEND BUILD'){
+            steps{
+                dir ('FRONTEND'){
+                    sh 'npm install'
+                    sh 'npm run build' 
+                }
+            }
+            
+        }
+        stage('BACKEND PACKAGE'){
+            steps{
+                dir ('BACKEND'){
+                sh 'mvn package'
+                }
+            }
+        }
+        stage('DOCKER BUILD'){
+            steps{
+                dir('BACKEND'){
+                    sh "docker build -t ${FRONTIMAGENAME}:${BUILD_NUMBER} ."
+                }
+                dir('FRONTEND'){    
+                    sh "docker build -t ${BACKIMAGENAME}:${BUILD_NUMBER} ."
+                }
+            }
+        }
+        stage('dcoker CONTAINER'){
+            steps{
+                sh "docker run -itd --name ${CONTAINERNAMEFRONT}${BUILD_NUMBER} -p 12${BUILD_NUMBER}:80 ${FRONTIMAGENAME}:${BUILD_NUMBER}"
+                sh "docker run -itd --name ${CONTAINERNAMEBACK}${BUILD_NUMBER} -p 3${BUILD_NUMBER}:80 ${BACKIMAGENAME}:${BUILD_NUMBER}"
+            }
+        }
+         
+    }
+}
